@@ -1,0 +1,87 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "name": "SBOM-SPDX-sdl2-2.32.8",
+  "creationInfo": {
+    "created": "2025-08-13T06:19:07Z",
+    "creators": [
+      "Tool: https://github.com/Homebrew/brew@4.6.0"
+    ]
+  },
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://formulae.brew.sh/spdx/sdl2-2.32.8.json",
+  "documentDescribes": [
+    "SPDXRef-Archive-sdl2-src",
+    "SPDXRef-Compiler",
+    "SPDXRef-Bottle-sdl2"
+  ],
+  "files": [],
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Archive-sdl2-src",
+      "name": "sdl2",
+      "versionInfo": "2.32.8",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "builtDate": "2025-06-02 23:00:39 UTC",
+      "licenseConcluded": "Zlib",
+      "downloadLocation": "https://github.com/libsdl-org/SDL/releases/download/release-2.32.8/SDL2-2.32.8.tar.gz",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [],
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "0ca83e9c9b31e18288c7ec811108e58bac1f1bb5ec6577ad386830eac51c787e"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Compiler",
+      "name": "clang",
+      "versionInfo": "26.0",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "checksums": [],
+      "externalRefs": []
+    },
+    {
+      "SPDXID": "SPDXRef-Bottle-sdl2",
+      "name": "sdl2",
+      "versionInfo": "2.32.8",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "builtDate": "2025-06-02 23:00:39 UTC",
+      "licenseConcluded": "Zlib",
+      "downloadLocation": "https://ghcr.io/v2/homebrew/core/sdl2/blobs/sha256:ccce09ed346668bd6c1e990be37c9b84ab93824211bc6e407f856adaff20a885",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:brew/homebrew/core/sdl2@2.32.8",
+          "referenceType": "purl"
+        }
+      ],
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "ccce09ed346668bd6c1e990be37c9b84ab93824211bc6e407f856adaff20a885"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-File-sdl2",
+      "relationshipType": "PACKAGE_OF",
+      "relatedSpdxElement": "SPDXRef-Archive-sdl2-src"
+    },
+    {
+      "spdxElementId": "SPDXRef-Compiler",
+      "relationshipType": "BUILD_TOOL_OF",
+      "relatedSpdxElement": "SPDXRef-Package-sdl2-src"
+    }
+  ]
+}

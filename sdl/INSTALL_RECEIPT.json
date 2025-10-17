@@ -1,0 +1,38 @@
+{
+  "homebrew_version": "4.5.4-4-ga0c89e4",
+  "used_options": [],
+  "unused_options": [],
+  "built_as_bottle": true,
+  "poured_from_bottle": true,
+  "loaded_from_api": true,
+  "installed_as_dependency": false,
+  "installed_on_request": true,
+  "changed_files": [
+    "lib/pkgconfig/sdl2.pc"
+  ],
+  "time": 1755065947,
+  "source_modified_time": 1748905239,
+  "compiler": "clang",
+  "aliases": [],
+  "runtime_dependencies": [],
+  "source": {
+    "spec": "stable",
+    "versions": {
+      "stable": "2.32.8",
+      "head": null,
+      "version_scheme": 0
+    },
+    "path": "/Users/mac/Library/Caches/Homebrew/api/formula.jws.json",
+    "tap_git_head": null,
+    "tap": "homebrew/core"
+  },
+  "arch": "arm64",
+  "built_on": {
+    "os": "Macintosh",
+    "os_version": "macOS 15.4",
+    "cpu_family": "dunno",
+    "xcode": "16.3",
+    "clt": "16.3.0.0.1.1742442376",
+    "preferred_perl": "5.34"
+  }
+}
