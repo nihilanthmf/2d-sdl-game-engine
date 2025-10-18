@@ -28,7 +28,7 @@ int init_sdl(SDL_Window **window, SDL_Renderer **renderer, int screen_width, int
     return 0;
 }
 
-/// @brief set all the pixels in the screen to 0 (must be called before any rendering every frame)
+/// @brief Sets all the pixels in the screen to 0 (must be called before any rendering every frame)
 void clear_screen(int *screen_pixel_buffer, int pixel_count) {
     // clearing the screen
     for (int i = 0; i < pixel_count; ++i) {
@@ -36,7 +36,7 @@ void clear_screen(int *screen_pixel_buffer, int pixel_count) {
     }
 }
 
-/// @brief render the current pixel buffer on the screen
+/// @brief Renders the current pixel buffer on the screen
 void render_frame(SDL_Renderer *renderer, SDL_Texture *texture, int *pixels, int screen_width) {
     SDL_UpdateTexture(texture, NULL, pixels, screen_width * sizeof(int));
 
@@ -51,6 +51,44 @@ void render_frame(SDL_Renderer *renderer, SDL_Texture *texture, int *pixels, int
     );
 
     SDL_RenderPresent(renderer);
+}
+
+/// @brief Creates a window and initialises basic rendering components
+/// @param screen_width
+/// @param screen_height
+/// @return RenderingComponents struct with necessary rendering components
+RenderingComponents init_rendering(int screen_width, int screen_height) {
+    RenderingComponents rendering_components;
+
+    // Declaring the basic SDL variables
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+
+    int pixels[screen_height * screen_width];
+    memset(pixels, 0x000000, sizeof(pixels));
+
+    // initialize window and renderer
+    int init_sdl_status = init_sdl(&window, &renderer, screen_width, screen_height);
+    if (init_sdl_status != 0) {
+        exit(1);
+    }
+
+    SDL_Texture *texture = SDL_CreateTexture(
+        renderer,
+        SDL_PIXELFORMAT_ARGB8888,
+        SDL_TEXTUREACCESS_STREAMING,
+        screen_width, screen_height
+    );
+
+    rendering_components.screen_width = screen_width;
+    rendering_components.screen_height = screen_height;
+    rendering_components.pixels = pixels;
+    rendering_components.pixel_count = sizeof(pixels) / sizeof(pixels[0]); // pixels (in bytes) / size of one pixel (in bytes)
+    rendering_components.window = window;
+    rendering_components.renderer = renderer;
+    rendering_components.texture = texture;
+
+    return rendering_components;
 }
 
 /// @brief Loads a sprite out of a supplied .bmp file
@@ -122,11 +160,38 @@ int get_key(char *key, const Uint8* keyboard_state) {
     return keyboard_state[scancode];
 }
 
+/// @brief Checks whether the supplised key has been clicked
+/// @param key a string containing human readable key name
+/// @param keyboard_state current state of the keyboard from SDL_GetKeyboardState
+/// @return 0 if not presses, 1 if presses, -1 if the supplied key does not exist
+int get_key_down(char *key, const Uint8* keyboard_state) {
+    int scancode = SDL_GetScancodeFromName(key);
+    if (scancode == SDL_SCANCODE_UNKNOWN) {
+        printf("Key %s is invalid!", key);
+        return -1;
+    }
+    bool key_state = keyboard_state[scancode];
+    if (key_state == true) {
+        // SDL_Event event = {.type = SDL_KEYUP, .key.keysym.scancode = scancode, .key.state = SDL_RELEASED, .key.repeat};
+        SDL_Event event;
+        event.type = SDL_KEYUP;
+        event.key.keysym.sym = scancode;  // the key you want to reset
+        event.key.state = SDL_RELEASED;
+        event.key.repeat = 0;
+        SDL_PushEvent(&event);
+    }
+    return key_state;
+}
+
+/// @brief Checks whether gameobject A collides with gameobject B based on their sprite size and position
+/// @param a 
+/// @param b 
+/// @return true if they collide, false otherwise
 bool collide(GameObject a, GameObject b) {
-    if (b.x + b.sprite->w > a.x && b.x < a.x + a.sprite->w) { // check X coordinate collision
-        // if (b.y > a.y && b.y < a.y + a.sprite->h) {
-            return true;
-        // }
+    if (
+        (a.x < b.x+b.sprite->w && a.x+a.sprite->w > b.x) && 
+        (a.y < b.y+b.sprite->h && a.y+a.sprite->h > b.y)) {
+        return true;
     }
     return false;
 }

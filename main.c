@@ -11,42 +11,21 @@ typedef struct Player {
 } Player;
 
 int main(int argc, char **argv) {
-    // Declaring the basic SDL variables
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-
-    int pixels[SCREEN_HEIGHT * SCREEN_WIDTH];
-    // pixels (in bytes) / size of one pixel (in bytes)
-    const int pixel_count = sizeof(pixels) / sizeof(pixels[0]);
-    memset(pixels, 0x000000, sizeof(pixels));
-
-    // initialize window and renderer
-    int init_sdl_status = init_sdl(&window, &renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-    if (init_sdl_status != 0) {
-        return 1;
-    }
-
-    SDL_Texture *texture = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_ARGB8888,
-        SDL_TEXTUREACCESS_STREAMING,
-        SCREEN_WIDTH, SCREEN_HEIGHT
-    );
+    RenderingComponents rendering_components = init_rendering(SCREEN_WIDTH, SCREEN_HEIGHT);
     SDL_Event event;
+    // Get the keyboard state array (valid for the lifetime of the program)
+    const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
     Player player;
-    player.game_object = create_gameobject(load_sprite("../art/gun.bmp"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+    player.game_object = create_gameobject(load_sprite("../art/heart.bmp"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
     player.health = 10;
 
     GameObject enemy = create_gameobject(load_sprite("../art/heart.bmp"), 300, 200);
 
-    // Get the keyboard state array (valid for the lifetime of the program)
-    const Uint8 *keys = SDL_GetKeyboardState(NULL);
-    
     // game loop
     bool running = true;
     while (running) {
-        clear_screen(pixels, pixel_count);
+        clear_screen(rendering_components.pixels, rendering_components.pixel_count);
 
         // handle events
         while (SDL_PollEvent(&event)) {
@@ -68,15 +47,19 @@ int main(int argc, char **argv) {
             player.game_object.y -= 5;
         }
 
+        if (get_key_down("e", keys)) {
+            printf("E pressed\n");
+        }
+
         if (collide(player.game_object, enemy)) {
             player.health--;
             printf("%d\n", player.health);
         }
 
-        draw_game_object(pixels, player.game_object, SCREEN_WIDTH, SCREEN_HEIGHT);
-        draw_game_object(pixels, enemy, SCREEN_WIDTH, SCREEN_HEIGHT);
+        draw_game_object(rendering_components.pixels, player.game_object, SCREEN_WIDTH, SCREEN_HEIGHT);
+        draw_game_object(rendering_components.pixels, enemy, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        render_frame(renderer, texture, pixels, SCREEN_WIDTH);
+        render_frame(rendering_components.renderer, rendering_components.texture, rendering_components.pixels, SCREEN_WIDTH);
 
         SDL_Delay(10);
     }
