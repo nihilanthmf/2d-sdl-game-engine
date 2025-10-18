@@ -1,3 +1,0 @@
-/Users/mac/Documents/code/sdl2d/build/CMakeFiles/main.dir
-/Users/mac/Documents/code/sdl2d/build/CMakeFiles/edit_cache.dir
-/Users/mac/Documents/code/sdl2d/build/CMakeFiles/rebuild_cache.dir

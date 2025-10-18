@@ -195,3 +195,7 @@ bool collide(GameObject a, GameObject b) {
     }
     return false;
 }
+
+void simulate_camera_movement() {
+    
+}
