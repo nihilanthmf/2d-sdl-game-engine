@@ -21,6 +21,18 @@ int main(int argc, char **argv) {
     player.health = 10;
 
     GameObject enemy = create_gameobject(load_sprite("../art/heart.bmp"), 300, 200);
+    GameObject enemy_2 = create_gameobject(load_sprite("../art/heart.bmp"), 100, 200);
+
+    // just malloc this okay?
+    int number_of_non_movable_go = 1;
+    // malloc an array of pointers to gameobjects
+    GameObject **non_movable_objects_list = malloc(sizeof(*non_movable_objects_list) * number_of_non_movable_go);
+    if (non_movable_objects_list == NULL) {
+        printf("Something went wrong!\n");
+        exit(1);
+    }
+
+    non_movable_objects_list[0] = &enemy_2;
 
     // game loop
     bool running = true;
@@ -47,8 +59,8 @@ int main(int argc, char **argv) {
             player.game_object.y -= 5;
         }
 
-        if (get_key_down("e", keys)) {
-            printf("E pressed\n");
+        if (get_key("e", keys)) {
+            simulate_camera_movement(non_movable_objects_list, number_of_non_movable_go, 2);
         }
 
         if (collide(player.game_object, enemy)) {
@@ -56,8 +68,9 @@ int main(int argc, char **argv) {
             printf("%d\n", player.health);
         }
 
-        draw_game_object(rendering_components.pixels, player.game_object, SCREEN_WIDTH, SCREEN_HEIGHT);
-        draw_game_object(rendering_components.pixels, enemy, SCREEN_WIDTH, SCREEN_HEIGHT);
+        draw_game_object(&rendering_components, player.game_object);
+        draw_game_object(&rendering_components, enemy);
+        draw_game_object(&rendering_components, enemy_2);
 
         render_frame(rendering_components.renderer, rendering_components.texture, rendering_components.pixels, SCREEN_WIDTH);
 

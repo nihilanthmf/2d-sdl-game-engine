@@ -131,7 +131,9 @@ void draw_sprite(int *screen_pixel_buffer, SDL_Surface* sprite, int pos_x, int p
         for (int x = 0; x < w; ++x) {
             int pixel = pixels[(h-y-1)*h+x];
             int screen_pixel_index = (pos_y + y)*screen_width + x + pos_x;
-            if (pixel && screen_pixel_index < screen_width * screen_height) {
+            if (pixel && screen_pixel_index < screen_width * screen_height &&
+                pos_x + x > 0 && pos_x + x < screen_width &&
+                pos_y + y > 0 && pos_y + y < screen_height) {
                 screen_pixel_buffer[screen_pixel_index] = pixel;
             }
         }
@@ -143,8 +145,8 @@ void draw_sprite(int *screen_pixel_buffer, SDL_Surface* sprite, int pos_x, int p
 /// @param gameobject 
 /// @param screen_width 
 /// @param screen_height 
-void draw_game_object(int *screen_pixel_buffer, GameObject game_object, int screen_width, int screen_height) {
-    draw_sprite(screen_pixel_buffer, game_object.sprite, game_object.x, game_object.y, screen_width, screen_height);
+void draw_game_object(RenderingComponents *rendering_components, GameObject game_object) {
+    draw_sprite(rendering_components->pixels, game_object.sprite, game_object.x, game_object.y, rendering_components->screen_width, rendering_components->screen_height);
 }
 
 /// @brief Check whether the supplied key is currently being pressed
@@ -196,6 +198,11 @@ bool collide(GameObject a, GameObject b) {
     return false;
 }
 
-void simulate_camera_movement() {
-    
+/// @brief Moves all the gameobject in a list with camera
+/// @param gameobjects_move_with_camera 
+/// @param camera_movement_speed 
+void simulate_camera_movement(GameObject **game_object_list, int length, int camera_movement_speed) {
+    for (int i = 0; i < length; ++i) {
+        game_object_list[i]->x -= camera_movement_speed;
+    }
 }
