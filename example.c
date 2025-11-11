@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
 
         int x, y;
         int mouse_state = get_mouse(&x, &y);
-        const mouse_enemy_collision_status = mouse_gameobject_collision(x, y, &enemy);
+        int mouse_enemy_collision_status = mouse_gameobject_collision(x, y, &enemy);
 
         if (collide(player.game_object, enemy)) {
             player.health--;

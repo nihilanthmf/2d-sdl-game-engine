@@ -32,3 +32,6 @@ int get_mouse(int *x, int *y);
 int mouse_gameobject_collision(int x, int y, GameObject *game_object);
 bool collide(GameObject a, GameObject b);
 void simulate_camera_movement(GameObject **game_object_list, int length, int camera_movement_speed);
+
+// Helpful utilities
+void draw_rectangle(int width, int height, int position_x, int position_y, int color, int screen_width, int screen_height, int *pixels);
