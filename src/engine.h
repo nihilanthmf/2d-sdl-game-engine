@@ -28,5 +28,7 @@ void draw_sprite(int *screen_pixel_buffer, SDL_Surface* sprite, int pos_x, int p
 void draw_game_object(RenderingComponents *rendering_components, GameObject game_object);
 int get_key(char *key, const Uint8* keyboard_state);
 int get_key_down(char *key, const Uint8* keyboard_state);
+int get_mouse(int *x, int *y);
+int mouse_gameobject_collision(int x, int y, GameObject *game_object);
 bool collide(GameObject a, GameObject b);
 void simulate_camera_movement(GameObject **game_object_list, int length, int camera_movement_speed);

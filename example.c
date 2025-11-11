@@ -20,10 +20,9 @@ int main(int argc, char **argv) {
     player.game_object = create_gameobject(load_sprite("../art/heart.bmp"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
     player.health = 10;
 
-    GameObject enemy = create_gameobject(load_sprite("../art/heart.bmp"), 300, 200);
+    GameObject enemy = create_gameobject(load_sprite("../art/heart.bmp"), 300, 400);
     GameObject enemy_2 = create_gameobject(load_sprite("../art/heart.bmp"), 100, 200);
 
-    // just malloc this okay?
     int number_of_non_movable_go = 1;
     // malloc an array of pointers to gameobjects
     GameObject **non_movable_objects_list = malloc(sizeof(*non_movable_objects_list) * number_of_non_movable_go);
@@ -62,6 +61,10 @@ int main(int argc, char **argv) {
         if (get_key("e", keys)) {
             simulate_camera_movement(non_movable_objects_list, number_of_non_movable_go, 2);
         }
+
+        int x, y;
+        int mouse_state = get_mouse(&x, &y);
+        const mouse_enemy_collision_status = mouse_gameobject_collision(x, y, &enemy);
 
         if (collide(player.game_object, enemy)) {
             player.health--;

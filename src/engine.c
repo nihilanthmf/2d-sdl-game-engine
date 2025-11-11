@@ -185,6 +185,29 @@ int get_key_down(char *key, const Uint8* keyboard_state) {
     return key_state;
 }
 
+/// @brief Get the mouse position & state
+/// @param x a pointer to a variable that will hold the "X" axis mouse position
+/// @param y a pointer to a variable that will hold the "Y" axis mouse position
+/// @return mouse button state
+int get_mouse(int *x, int *y) {
+    int scancode = SDL_GetMouseState(x, y);
+    return scancode;
+}
+
+/// @brief Check whether the mouse collides with a GameObject
+/// @param x current X coordinate of a mouse
+/// @param y current Y coordinate of a mouse
+/// @param game_object a pointer to the GameObject
+/// @return 1 if collides, 0 otherwise
+int mouse_gameobject_collision(int x, int y, GameObject *game_object) {
+    if (x >= game_object->x && x <= (game_object->x + game_object->sprite->w) &&
+        y <= game_object->y && y >= (game_object->y - game_object->sprite->h)
+    ) {
+        return true;
+    }
+    return false;
+}
+
 /// @brief Checks whether gameobject A collides with gameobject B based on their sprite size and position
 /// @param a 
 /// @param b 
