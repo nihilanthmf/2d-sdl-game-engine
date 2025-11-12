@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include "../src/engine.h"
+#include "../src/utilities.h"
 
 #define SCREEN_WIDTH 1000
 #define SCREEN_HEIGHT 800
@@ -31,7 +32,7 @@ int main(int argc, char **argv) {
         int mouse_x, mouse_y;
         int mouse_state = get_mouse(&mouse_x, &mouse_y);
 
-        // draw a square stricktly in a grid when left mouse button is pressed
+        // draw a square strictly in a grid when left mouse button is pressed
         if (mouse_state == 1) {
             int color = get_key("d", keys) == 1 ? 0x000000 : 0xff0000;
             int x = round(((float)mouse_x) / cell_size) * cell_size;

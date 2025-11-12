@@ -22,7 +22,6 @@ int main(int argc, char **argv) {
 
     GameObject enemy = create_gameobject(load_sprite("../art/heart.bmp"), 300, 400);
     GameObject enemy_2 = create_gameobject(load_sprite("../art/heart.bmp"), 100, 200);
-    GameObject background = create_gameobject(load_sprite("../art/background.bmp"), 100, 200);
 
     int number_of_non_movable_go = 1;
     // malloc an array of pointers to gameobjects
@@ -71,11 +70,6 @@ int main(int argc, char **argv) {
             player.health--;
             printf("%d\n", player.health);
         }
-
-        // draw the background full screen, draw the middle of the image if it's bigger than the screen's resolution
-        draw_sprite(rendering_components.pixels, background.sprite, 
-            (SCREEN_WIDTH-background.sprite->w)/2, (SCREEN_HEIGHT-background.sprite->h)/2,
-            SCREEN_WIDTH, SCREEN_HEIGHT);
 
         draw_game_object(&rendering_components, player.game_object);
         draw_game_object(&rendering_components, enemy);

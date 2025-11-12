@@ -100,7 +100,12 @@ SDL_Surface* load_sprite(char* file_path) {
         printf("%s\n", SDL_GetError());
         exit(1);
     }
-    return sprite;
+    SDL_Surface* optimized = SDL_ConvertSurfaceFormat(sprite, SDL_PIXELFORMAT_ARGB8888, 0);
+    if (optimized == NULL) {
+        printf("%s\n", SDL_GetError());
+        exit(1);
+    }
+    return optimized;
 }
 
 /// @brief An easy way to initialize a GameObject structure
@@ -122,6 +127,8 @@ GameObject create_gameobject(SDL_Surface* sprite, int x, int y) {
 /// @param sprite 
 /// @param pos_x 
 /// @param pos_y 
+/// @param screen_width 
+/// @param screen_height 
 void draw_sprite(int *screen_pixel_buffer, SDL_Surface* sprite, int pos_x, int pos_y, int screen_width, int screen_height) {
     int *pixels = (int*)(sprite->pixels);
     int w = sprite->w;
@@ -129,12 +136,12 @@ void draw_sprite(int *screen_pixel_buffer, SDL_Surface* sprite, int pos_x, int p
 
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
-            int pixel = pixels[(h-y-1)*h+x];
+            int pixel = pixels[(h-y-1)*w+x];
             int screen_pixel_index = (pos_y + y)*screen_width + x + pos_x;
             if (pixel && screen_pixel_index < screen_width * screen_height &&
                 pos_x + x > 0 && pos_x + x < screen_width &&
                 pos_y + y > 0 && pos_y + y < screen_height) {
-                screen_pixel_buffer[screen_pixel_index] = pixel;
+                    screen_pixel_buffer[screen_pixel_index] = pixel;
             }
         }
     }
@@ -229,28 +236,3 @@ void simulate_camera_movement(GameObject **game_object_list, int length, int cam
         game_object_list[i]->x -= camera_movement_speed;
     }
 }
-
-// ================
-// HELPFUL UTILITIES
-// ================
-
-/// @brief Draws a rectangle to the screen
-/// @param width 
-/// @param height 
-/// @param position_x 
-/// @param position_y 
-/// @param color 
-/// @param screen_width 
-/// @param screen_height 
-/// @param pixels 
-void draw_rectangle(int width, int height, int position_x, int position_y, int color, int screen_width, int screen_height, int *pixels) {
-    for (int x = -width/2; x < width/2; ++x) {
-        for (int y = -height/2; y < height/2; ++y) {
-            int index = screen_width*(screen_height-position_y+y) + position_x + x;
-            if (index >= 0 && index < screen_width*screen_height) {
-                pixels[index] = color;
-            }
-        }
-    }
-}
-
