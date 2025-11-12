@@ -3,14 +3,14 @@
 #include "engine.h"
 
 /// @brief Create a window and a renderer
-int init_sdl(SDL_Window **window, SDL_Renderer **renderer, int screen_width, int screen_heght) {
+int init_sdl(SDL_Window **window, SDL_Renderer **renderer) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_Log("SDL_Init failed: %s", SDL_GetError());
         return 1;
     }
 
     // create a window
-    *window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_heght, 0);
+    *window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
     if (!*window) {
         SDL_Log("SDL_CreateWindow failed: %s", SDL_GetError());
         SDL_Quit();
@@ -26,6 +26,16 @@ int init_sdl(SDL_Window **window, SDL_Renderer **renderer, int screen_width, int
     }
 
     return 0;
+}
+
+/// @brief Get the screen size
+/// @return SDL_DisplayMode instance with w and h representing width and height of the screen respectively
+SDL_DisplayMode get_screen_size() {
+    SDL_DisplayMode display_mode;
+    if (SDL_GetCurrentDisplayMode(0, &display_mode) != 0) {
+        printf("SDL_GetCurrentDisplayMode failed: %s\n", SDL_GetError());
+    }
+    return display_mode;
 }
 
 /// @brief Sets all the pixels in the screen to 0 (must be called before any rendering every frame)
@@ -57,21 +67,25 @@ void render_frame(SDL_Renderer *renderer, SDL_Texture *texture, int *pixels, int
 /// @param screen_width
 /// @param screen_height
 /// @return RenderingComponents struct with necessary rendering components
-RenderingComponents init_rendering(int screen_width, int screen_height) {
+RenderingComponents init_rendering() {
     RenderingComponents rendering_components;
 
     // Declaring the basic SDL variables
     SDL_Window *window;
     SDL_Renderer *renderer;
 
-    int pixels[screen_height * screen_width];
-    memset(pixels, 0x000000, sizeof(pixels));
-
     // initialize window and renderer
-    int init_sdl_status = init_sdl(&window, &renderer, screen_width, screen_height);
+    int init_sdl_status = init_sdl(&window, &renderer);
     if (init_sdl_status != 0) {
         exit(1);
     }
+
+    SDL_DisplayMode display_mode = get_screen_size();
+    int screen_width = display_mode.w;
+    int screen_height = display_mode.h;
+
+    int pixels[screen_height * screen_width];
+    memset(pixels, 0x000000, sizeof(pixels));
 
     SDL_Texture *texture = SDL_CreateTexture(
         renderer,

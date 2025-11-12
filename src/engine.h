@@ -18,10 +18,11 @@ typedef struct GameObject {
     int y;
 } GameObject;
 
-int init_sdl(SDL_Window **window, SDL_Renderer **renderer, int screen_width, int screen_heght);
+int init_sdl(SDL_Window **window, SDL_Renderer **renderer);
+SDL_DisplayMode get_screen_size();
 void clear_screen(int *screen_pixel_buffer, int pixel_count);
 void render_frame(SDL_Renderer *renderer, SDL_Texture *texture, int *pixels, int screen_width);
-RenderingComponents init_rendering(int screen_width, int screen_height);
+RenderingComponents init_rendering();
 SDL_Surface* load_sprite(char* file_path);
 GameObject create_gameobject(SDL_Surface* sprite, int x, int y);
 void draw_sprite(int *screen_pixel_buffer, SDL_Surface* sprite, int pos_x, int pos_y, int screen_width, int screen_height);

@@ -2,22 +2,23 @@
 #include <stdbool.h>
 #include "src/engine.h"
 
-#define SCREEN_WIDTH 1000
-#define SCREEN_HEIGHT 800
-
 typedef struct Player {
     GameObject game_object;
     int health;
 } Player;
 
 int main(int argc, char **argv) {
-    RenderingComponents rendering_components = init_rendering(SCREEN_WIDTH, SCREEN_HEIGHT);
+    RenderingComponents rendering_components = init_rendering();
     SDL_Event event;
     // Get the keyboard state array (valid for the lifetime of the program)
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
+    SDL_DisplayMode display_mode = get_screen_size();
+    int screen_width = display_mode.w;
+    int screen_height = display_mode.h;
+
     Player player;
-    player.game_object = create_gameobject(load_sprite("../art/heart.bmp"), SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+    player.game_object = create_gameobject(load_sprite("../art/heart.bmp"), screen_width/2, screen_height/2);
     player.health = 10;
 
     GameObject enemy = create_gameobject(load_sprite("../art/heart.bmp"), 300, 400);
@@ -74,14 +75,14 @@ int main(int argc, char **argv) {
 
         // draw the background full screen, draw the middle of the image if it's bigger than the screen's resolution
         draw_sprite(rendering_components.pixels, background.sprite, 
-            (SCREEN_WIDTH-background.sprite->w)/2, (SCREEN_HEIGHT-background.sprite->h)/2,
-            SCREEN_WIDTH, SCREEN_HEIGHT);
+            (screen_width-background.sprite->w)/2, (screen_height-background.sprite->h)/2,
+            screen_width, screen_height);
 
         draw_game_object(&rendering_components, player.game_object);
         draw_game_object(&rendering_components, enemy);
         draw_game_object(&rendering_components, enemy_2);
 
-        render_frame(rendering_components.renderer, rendering_components.texture, rendering_components.pixels, SCREEN_WIDTH);
+        render_frame(rendering_components.renderer, rendering_components.texture, rendering_components.pixels, screen_width);
 
         SDL_Delay(10);
     }
