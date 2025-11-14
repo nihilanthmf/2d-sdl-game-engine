@@ -11,6 +11,7 @@ int init_sdl(SDL_Window **window, SDL_Renderer **renderer) {
 
     // create a window
     *window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    // *window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920/5*2, 1080/5*2, 0);
     if (!*window) {
         SDL_Log("SDL_CreateWindow failed: %s", SDL_GetError());
         SDL_Quit();
@@ -148,6 +149,8 @@ void draw_sprite(int *screen_pixel_buffer, SDL_Surface* sprite, int pos_x, int p
     int w = sprite->w;
     int h = sprite->h;
 
+    pos_y = screen_height - pos_y;
+
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
             int pixel = pixels[(h-y-1)*w+x];
@@ -243,10 +246,11 @@ bool collide(GameObject a, GameObject b) {
 }
 
 /// @brief Moves all the gameobject in a list with camera
-/// @param gameobjects_move_with_camera 
-/// @param camera_movement_speed 
+/// @param gameobjects_move_with_camera
+/// @param camera_movement_speed
 void simulate_camera_movement(GameObject **game_object_list, int length, int camera_movement_speed) {
     for (int i = 0; i < length; ++i) {
         game_object_list[i]->x -= camera_movement_speed;
     }
 }
+

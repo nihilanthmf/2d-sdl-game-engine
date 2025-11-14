@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <stdbool.h>
 #include "src/engine.h"
+#include "src/utilities.h"
 
 typedef struct Player {
     GameObject game_object;
@@ -34,11 +35,12 @@ int main(int argc, char **argv) {
     }
 
     non_movable_objects_list[0] = &enemy_2;
+    bool mouse_pressed = false;
 
     // game loop
     bool running = true;
     while (running) {
-        clear_screen(rendering_components.pixels, rendering_components.pixel_count);
+        // clear_screen(rendering_components.pixels, rendering_components.pixel_count);
 
         // handle events
         while (SDL_PollEvent(&event)) {
@@ -54,10 +56,10 @@ int main(int argc, char **argv) {
             player.game_object.x -= 5;
         }
         if (get_key("w", keys) == 1) {
-            player.game_object.y += 5;
+            player.game_object.y -= 5;
         }
         else if (get_key("s", keys) == 1) {
-            player.game_object.y -= 5;
+            player.game_object.y += 5;
         }
 
         if (get_key("e", keys)) {
@@ -68,6 +70,8 @@ int main(int argc, char **argv) {
         int mouse_state = get_mouse(&x, &y);
         int mouse_enemy_collision_status = mouse_gameobject_collision(x, y, &enemy);
 
+        drag_and_drop(&enemy, &mouse_pressed);
+
         if (collide(player.game_object, enemy)) {
             player.health--;
             printf("%d\n", player.health);
@@ -75,7 +79,7 @@ int main(int argc, char **argv) {
 
         // draw the background full screen, draw the middle of the image if it's bigger than the screen's resolution
         draw_sprite(rendering_components.pixels, background.sprite, 
-            (screen_width-background.sprite->w)/2, (screen_height-background.sprite->h)/2,
+            (screen_width-background.sprite->w)/2, screen_height + (background.sprite->h-screen_height)/2,
             screen_width, screen_height);
 
         draw_game_object(&rendering_components, player.game_object);
