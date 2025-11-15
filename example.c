@@ -3,8 +3,6 @@
 #include "src/engine.h"
 #include "src/utilities.h"
 
-// === Defining global variables ===
-
 typedef struct Player {
     GameObject game_object;
     int health;
@@ -59,7 +57,7 @@ void start() {
     drag_and_drop_mouse_pressed = false;
 }
 
-// Function that gets called every frame
+// Function that gets called every frame, used for game logic
 void update(bool running) {    
     if (get_key("d", keys) == 1) {
         player.game_object.x += 5;
@@ -88,7 +86,10 @@ void update(bool running) {
         player.health--;
         printf("%d\n", player.health);
     }
+}
 
+// Function that gets called every frame after update(), used to render to the screen
+void render() {
     // draw the background full screen, draw the middle of the image if it's bigger than the screen's resolution
     draw_sprite(rendering_components.pixels, background.sprite, 
         (screen_width-background.sprite->w)/2, screen_height + (background.sprite->h-screen_height)/2,
@@ -102,7 +103,7 @@ void update(bool running) {
 }
 
 int main(int argc, char **argv) {
-    game_loop(start, update);
+    game_loop(start, update, render);
 
     return 0;
 }

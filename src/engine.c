@@ -32,7 +32,7 @@ int init_sdl(SDL_Window **window, SDL_Renderer **renderer) {
 /// @brief A function that controls the game loop
 /// @param start pointer to a function that gets called once before the first frame every gets drawn, before first update() gets called
 /// @param update pointer to a function that gets called every frame, after start()
-void game_loop(void (*start)(), void (*update)(bool)) {
+void game_loop(void (*start)(), void (*update)(bool), void (*render)()) {
     start();
 
     bool running = true;
@@ -46,6 +46,7 @@ void game_loop(void (*start)(), void (*update)(bool)) {
         }
 
         update(running);
+        render();
         SDL_Delay(10);
     }
 }

@@ -19,7 +19,7 @@ typedef struct GameObject {
 } GameObject;
 
 int init_sdl(SDL_Window **window, SDL_Renderer **renderer);
-void game_loop(void (*start)(), void (*update)(bool));
+void game_loop(void (*start)(), void (*update)(bool), void (*render)());
 SDL_DisplayMode get_screen_size();
 void clear_screen(int *screen_pixel_buffer, int pixel_count);
 void render_frame(SDL_Renderer *renderer, SDL_Texture *texture, int *pixels, int screen_width);
