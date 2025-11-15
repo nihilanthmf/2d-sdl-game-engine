@@ -29,6 +29,27 @@ int init_sdl(SDL_Window **window, SDL_Renderer **renderer) {
     return 0;
 }
 
+/// @brief A function that controls the game loop
+/// @param start pointer to a function that gets called once before the first frame every gets drawn, before first update() gets called
+/// @param update pointer to a function that gets called every frame, after start()
+void game_loop(void (*start)(), void (*update)(bool)) {
+    start();
+
+    bool running = true;
+    SDL_Event event;
+    while (running) {
+        // handle events
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = false;
+            }
+        }
+
+        update(running);
+        SDL_Delay(10);
+    }
+}
+
 /// @brief Get the screen size
 /// @return SDL_DisplayMode instance with w and h representing width and height of the screen respectively
 SDL_DisplayMode get_screen_size() {
