@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <stdbool.h>
-#include "src/engine.h"
-#include "src/utilities.h"
+#include "../src/engine.h"
+#include "../src/utilities.h"
 
 typedef struct Player {
     GameObject game_object;
@@ -22,10 +22,6 @@ GameObject enemy;
 GameObject enemy_2;
 GameObject background;
 
-int number_of_non_movable_go;
-// malloc an array of pointers to gameobjects
-GameObject **non_movable_objects_list; 
-
 bool drag_and_drop_mouse_pressed;
 
 // Function that gets called once after the start of the program, before update()
@@ -44,16 +40,6 @@ void start() {
     enemy_2 = create_gameobject(load_sprite("../art/heart.bmp"), 100, 200);
     background = create_gameobject(load_sprite("../art/background.bmp"), 100, 200);
 
-    number_of_non_movable_go = 1;
-
-    non_movable_objects_list = malloc(sizeof(*non_movable_objects_list) * number_of_non_movable_go);
-    if (non_movable_objects_list == NULL) {
-        printf("Something went wrong!\n");
-        exit(1);
-    }
-
-    non_movable_objects_list[0] = &enemy_2;
-
     drag_and_drop_mouse_pressed = false;
 }
 
@@ -70,10 +56,6 @@ void update(bool running) {
     }
     else if (get_key("s", keys) == 1) {
         player.game_object.y += 5;
-    }
-
-    if (get_key("e", keys)) {
-        simulate_camera_movement(non_movable_objects_list, number_of_non_movable_go, 2);
     }
 
     int x, y;

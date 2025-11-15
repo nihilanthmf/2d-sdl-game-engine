@@ -267,12 +267,3 @@ bool collide(GameObject a, GameObject b) {
     return false;
 }
 
-/// @brief Moves all the gameobject in a list with camera
-/// @param gameobjects_move_with_camera
-/// @param camera_movement_speed
-void simulate_camera_movement(GameObject **game_object_list, int length, int camera_movement_speed) {
-    for (int i = 0; i < length; ++i) {
-        game_object_list[i]->x -= camera_movement_speed;
-    }
-}
-
