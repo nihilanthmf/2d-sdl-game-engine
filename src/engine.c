@@ -47,7 +47,7 @@ void game_loop(void (*start)(), void (*update)(bool), void (*render)()) {
 
         update(running);
         render();
-        SDL_Delay(10);
+        // SDL_Delay(10);
     }
 }
 
@@ -131,7 +131,7 @@ RenderingComponents init_rendering() {
 /// @brief Loads a sprite out of a supplied .bmp file
 /// @param file_path 
 /// @return pointer to the newly created SDL_Surface
-SDL_Surface* load_sprite(char* file_path) {
+SDL_Surface* load_sprite(char *file_path) {
     SDL_Surface* sprite = SDL_LoadBMP(file_path);
     if (sprite == NULL) {
         printf("%s\n", SDL_GetError());
@@ -150,7 +150,7 @@ SDL_Surface* load_sprite(char* file_path) {
 /// @param x x coordinate
 /// @param y x coordinate
 /// @return returns a copy of a newly created GameObject struct
-GameObject create_gameobject(SDL_Surface* sprite, int x, int y) {
+GameObject create_gameobject(SDL_Surface *sprite, int x, int y) {
     GameObject game_object;
     game_object.sprite = sprite;
     game_object.x = x;
@@ -166,7 +166,7 @@ GameObject create_gameobject(SDL_Surface* sprite, int x, int y) {
 /// @param pos_y 
 /// @param screen_width 
 /// @param screen_height 
-void draw_sprite(int *screen_pixel_buffer, SDL_Surface* sprite, int pos_x, int pos_y, int screen_width, int screen_height) {
+void draw_sprite(int *screen_pixel_buffer, SDL_Surface *sprite, int pos_x, int pos_y, int screen_width, int screen_height) {
     int *pixels = (int*)(sprite->pixels);
     int w = sprite->w;
     int h = sprite->h;
@@ -199,7 +199,7 @@ void draw_game_object(RenderingComponents *rendering_components, GameObject game
 /// @param key a string containing human readable key name
 /// @param keyboard_state current state of the keyboard from SDL_GetKeyboardState
 /// @return 0 if not presses, 1 if presses, -1 if the supplied key does not exist
-int get_key(char *key, const Uint8* keyboard_state) {
+int get_key(char *key, const Uint8 *keyboard_state) {
     int scancode = SDL_GetScancodeFromName(key);
     if (scancode == SDL_SCANCODE_UNKNOWN) {
         printf("Key %s is invalid!", key);
@@ -212,7 +212,7 @@ int get_key(char *key, const Uint8* keyboard_state) {
 /// @param key a string containing human readable key name
 /// @param keyboard_state current state of the keyboard from SDL_GetKeyboardState
 /// @return 0 if not presses, 1 if presses, -1 if the supplied key does not exist
-int get_key_down(char *key, const Uint8* keyboard_state) {
+int get_key_down(char *key, const Uint8 *keyboard_state) {
     int scancode = SDL_GetScancodeFromName(key);
     if (scancode == SDL_SCANCODE_UNKNOWN) {
         printf("Key %s is invalid!", key);
@@ -265,5 +265,27 @@ bool collide(GameObject a, GameObject b) {
         return true;
     }
     return false;
+}
+
+/// @brief Resize a sprite (SDL_Surface) 
+/// @param sprite a pointer to an original SDL_Surface
+/// @param scale how much bigger (smaller) the resulting sprite should be
+/// @return pointer to SDL_Surface that is of a correct size
+SDL_Surface* resize_sprite(SDL_Surface *sprite, float scale) {
+    int new_width = sprite->w * scale;
+    int new_height = sprite->h * scale;
+    int *new_pixels = (int*)malloc(new_width * new_height * sizeof(int));
+
+    SDL_Surface *resized_sprite = SDL_CreateRGBSurfaceWithFormat(0, new_width, new_height, 
+                                                                 sprite->format->BitsPerPixel, sprite->format->format);
+
+    for (int y = 0; y < new_height; ++y) {
+        for (int x = 0; x < new_width; ++x) {
+            int old_pixel_index = ((y / scale) * sprite->w + (x / scale));
+            ((int*)(resized_sprite->pixels))[y * new_width + x] = ((int*)((sprite->pixels)))[old_pixel_index];
+        }
+    }
+
+    return resized_sprite;
 }
 

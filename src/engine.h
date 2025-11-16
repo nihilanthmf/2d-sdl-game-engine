@@ -33,3 +33,4 @@ int get_key_down(char *key, const Uint8* keyboard_state);
 int get_mouse(int *x, int *y);
 int mouse_gameobject_collision(int x, int y, GameObject *game_object);
 bool collide(GameObject a, GameObject b);
+SDL_Surface* resize_sprite(SDL_Surface *sprite, float scale);
