@@ -79,10 +79,12 @@ SDL_Surface* create_text_character_sprite(char c, SDL_Surface *font, int font_ch
     return character_sprite;
 }
 
-/// @brief Create a (!! one line) of text
-/// @param text text to create a sprite of
-/// @param text_length length of the provided text
-/// @return a pointer to SDL_Surface with text sprite
+/// @brief Create a one line of text as a SDL_Surface sprite
+/// @param text a char array of text
+/// @param text_length lenght of the text array
+/// @param font a pointer to a font (SDL_Surface)
+/// @param font_character_grid_size // width and height of a letter image in a font file, including spaces between characters
+/// @return pointer to SDL_Surface with character sprite
 SDL_Surface* create_text_sprite(char *text, int text_length, SDL_Surface *font, int font_character_grid_size) {
     SDL_Surface *text_sprite = SDL_CreateRGBSurfaceWithFormat(0, font_character_grid_size * text_length, font_character_grid_size, 
                                                                  font->format->BitsPerPixel, font->format->format);

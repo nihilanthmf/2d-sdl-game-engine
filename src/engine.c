@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include "engine.h"
 
+bool keyboard_state[SDL_NUM_SCANCODES] = {0};
+
 /// @brief Create a window and a renderer
 int init_sdl(SDL_Window **window, SDL_Renderer **renderer) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -40,8 +42,17 @@ void game_loop(void (*start)(), void (*update)(bool), void (*render)()) {
     while (running) {
         // handle events
         while (SDL_PollEvent(&event)) {
+            // quit the app event
             if (event.type == SDL_QUIT) {
                 running = false;
+            }
+
+            // updating keyboard state
+            if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                keyboard_state[event.key.keysym.scancode] = true;
+            }
+            if (event.type == SDL_KEYUP) {
+                keyboard_state[event.key.keysym.scancode] = false;
             }
         }
 
@@ -196,38 +207,19 @@ void draw_game_object(RenderingComponents *rendering_components, GameObject game
 }
 
 /// @brief Check whether the supplied key is currently being pressed
-/// @param key a string containing human readable key name
-/// @param keyboard_state current state of the keyboard from SDL_GetKeyboardState
+/// @param key SDL_Scancode containing the scancode of the key (use SDL_SCANCODE_A, SDL_SCANCODE_B, SDL_SCANCODE_SPACE, etc.)
 /// @return 0 if not presses, 1 if presses, -1 if the supplied key does not exist
-int get_key(char *key, const Uint8 *keyboard_state) {
-    int scancode = SDL_GetScancodeFromName(key);
-    if (scancode == SDL_SCANCODE_UNKNOWN) {
-        printf("Key %s is invalid!", key);
-        return -1;
-    }
-    return keyboard_state[scancode];
+int get_key(SDL_Scancode key) {
+    bool key_state = keyboard_state[key];
+    return key_state;
 }
 
-/// @brief Checks whether the supplised key has been clicked
-/// @param key a string containing human readable key name
-/// @param keyboard_state current state of the keyboard from SDL_GetKeyboardState
+/// @brief Checks whether the supplied key has been clicked
+/// @param key SDL_Scancode containing the scancode of the key (use SDL_SCANCODE_A, SDL_SCANCODE_B, SDL_SCANCODE_SPACE, etc.)
 /// @return 0 if not presses, 1 if presses, -1 if the supplied key does not exist
-int get_key_down(char *key, const Uint8 *keyboard_state) {
-    int scancode = SDL_GetScancodeFromName(key);
-    if (scancode == SDL_SCANCODE_UNKNOWN) {
-        printf("Key %s is invalid!", key);
-        return -1;
-    }
-    bool key_state = keyboard_state[scancode];
-    if (key_state == true) {
-        // SDL_Event event = {.type = SDL_KEYUP, .key.keysym.scancode = scancode, .key.state = SDL_RELEASED, .key.repeat};
-        SDL_Event event;
-        event.type = SDL_KEYUP;
-        event.key.keysym.sym = scancode;  // the key you want to reset
-        event.key.state = SDL_RELEASED;
-        event.key.repeat = 0;
-        SDL_PushEvent(&event);
-    }
+int get_key_down(SDL_Scancode key) {
+    bool key_state = keyboard_state[key];
+    keyboard_state[key] = false;
     return key_state;
 }
 
@@ -281,7 +273,7 @@ SDL_Surface* resize_sprite(SDL_Surface *sprite, float scale) {
 
     for (int y = 0; y < new_height; ++y) {
         for (int x = 0; x < new_width; ++x) {
-            int old_pixel_index = ((y / scale) * sprite->w + (x / scale));
+            int old_pixel_index = ((int)(y / scale) * sprite->w + (int)(x / scale));
             ((int*)(resized_sprite->pixels))[y * new_width + x] = ((int*)((sprite->pixels)))[old_pixel_index];
         }
     }

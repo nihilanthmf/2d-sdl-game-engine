@@ -3,26 +3,19 @@
 #include "../src/engine.h"
 #include "../src/utilities.h"
 
-typedef struct Player {
-    GameObject game_object;
-    int health;
-} Player;
-
 RenderingComponents rendering_components;
-// Get the keyboard state array (valid for the lifetime of the program)
-const Uint8 *keys;
 
 SDL_DisplayMode display_mode;
 int screen_width;
 int screen_height;
 
-Player player;
-
-GameObject enemy;
-GameObject enemy_2;
 GameObject background;
 GameObject monitor;
+GameObject lamp;
 GameObject text;
+
+SDL_Surface *lamp_off;
+SDL_Surface *lamp_on;
 
 bool drag_and_drop_mouse_pressed;
 long current_time = 0;
@@ -30,26 +23,25 @@ long current_time = 0;
 // Function that gets called once after the start of the program, before update()
 void start() {
     rendering_components = init_rendering();
-    keys = SDL_GetKeyboardState(NULL);
     display_mode = get_screen_size();
 
     screen_width = display_mode.w;
     screen_height = display_mode.h;
 
-    player.game_object = create_gameobject(load_sprite("../example/art/heart.bmp"), screen_width/2, screen_height/2);
-    player.health = 10;
-
-    enemy = create_gameobject(load_sprite("../example/art/heart.bmp"), 300, 400);
-    enemy_2 = create_gameobject(load_sprite("../example/art/heart.bmp"), 100, 200);
     background = create_gameobject(load_sprite("../example/art/background.bmp"), 100, 200);
 
     SDL_Surface *font = load_sprite("../example/art/font.bmp");
     int font_character_grid_size = 30; // width and height of a letter image in a font file, including spaces between characters
-    text = create_gameobject(create_text_sprite("!", 1, font, font_character_grid_size), 100, 200);
+    text = create_gameobject(create_text_sprite("Day 1", 5, font, font_character_grid_size), 100, 100);
 
-    monitor = create_gameobject(resize_sprite(load_sprite("../example/art/monitor.bmp"), 0.5), 0, 0);
+    monitor = create_gameobject(resize_sprite(load_sprite("../example/art/monitor.bmp"), 8), 0, 0);
+
+    lamp_off = load_sprite("../example/art/lamp-off.bmp");
+    lamp_on = load_sprite("../example/art/lamp-on.bmp");
+    lamp = create_gameobject(resize_sprite(lamp_off, 1), 100, 500);
+
     monitor.x = display_mode.w/2 - monitor.sprite->w/2;
-    monitor.y = display_mode.h/2 + monitor.sprite->h/2;
+    monitor.y = display_mode.h/2 + monitor.sprite->h/2 - 50;
 
     drag_and_drop_mouse_pressed = false;
 }
@@ -60,29 +52,12 @@ void update(bool running) {
     int fps = 1000 / (updated_time - current_time);
     current_time = updated_time;
 
-    if (get_key("d", keys) == 1) {
-        player.game_object.x += 5;
-    }
-    else if (get_key("a", keys) == 1) {
-        player.game_object.x -= 5;
-    }
-    if (get_key("w", keys) == 1) {
-        player.game_object.y -= 5;
-    }
-    else if (get_key("s", keys) == 1) {
-        player.game_object.y += 5;
+    if (get_key_down(SDL_SCANCODE_SPACE)) {
+        lamp.sprite = lamp.sprite == lamp_on ? lamp_off : lamp_on;
     }
 
     int x, y;
     int mouse_state = get_mouse(&x, &y);
-    int mouse_enemy_collision_status = mouse_gameobject_collision(x, y, &enemy);
-
-    drag_and_drop(&enemy, &drag_and_drop_mouse_pressed);
-
-    if (collide(player.game_object, enemy)) {
-        player.health--;
-        printf("%d\n", player.health);
-    }
 }
 
 // Function that gets called every frame after update(), used to render to the screen
@@ -92,10 +67,8 @@ void render() {
         (screen_width-background.sprite->w)/2, screen_height + (background.sprite->h-screen_height)/2,
         screen_width, screen_height);
 
-    draw_game_object(&rendering_components, player.game_object);
-    draw_game_object(&rendering_components, enemy);
-    draw_game_object(&rendering_components, enemy_2);
     draw_game_object(&rendering_components, monitor);
+    draw_game_object(&rendering_components, lamp);
     draw_game_object(&rendering_components, text);
 
     render_frame(rendering_components.renderer, rendering_components.texture, rendering_components.pixels, screen_width);
