@@ -22,7 +22,7 @@ GameObject enemy;
 GameObject enemy_2;
 GameObject background;
 GameObject monitor;
-GameObject letter;
+GameObject text;
 
 bool drag_and_drop_mouse_pressed;
 long current_time = 0;
@@ -43,7 +43,9 @@ void start() {
     enemy_2 = create_gameobject(load_sprite("../example/art/heart.bmp"), 100, 200);
     background = create_gameobject(load_sprite("../example/art/background.bmp"), 100, 200);
 
-    letter = create_gameobject(create_text_character_sprite('K'), 300, 400);
+    SDL_Surface *font = load_sprite("../example/art/font.bmp");
+    int font_character_grid_size = 30; // width and height of a letter image in a font file, including spaces between characters
+    text = create_gameobject(create_text_sprite("!", 1, font, font_character_grid_size), 100, 200);
 
     monitor = create_gameobject(resize_sprite(load_sprite("../example/art/monitor.bmp"), 0.5), 0, 0);
     monitor.x = display_mode.w/2 - monitor.sprite->w/2;
@@ -94,7 +96,7 @@ void render() {
     draw_game_object(&rendering_components, enemy);
     draw_game_object(&rendering_components, enemy_2);
     draw_game_object(&rendering_components, monitor);
-    draw_game_object(&rendering_components, letter);
+    draw_game_object(&rendering_components, text);
 
     render_frame(rendering_components.renderer, rendering_components.texture, rendering_components.pixels, screen_width);
 }

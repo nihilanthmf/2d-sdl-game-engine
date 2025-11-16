@@ -51,35 +51,55 @@ long get_current_time_in_ms() {
     return ms;
 }
 
-/// @brief Create a SDL_Surface sprite of one character using project's font (to generate a nice font file: https://stmn.itch.io/font2bitmap)
+/// @brief Create a SDL_Surface sprite of one character using a provided font (the font has to be a .bmp file with one line of characters in ASCII order, to generate a nice font file: https://stmn.itch.io/font2bitmap)
 /// @param c character to create a sprite out of
-/// @return pointer to SDL_Surface with character sprite
-SDL_Surface* create_text_character_sprite(char c) {
-    SDL_Surface *font = load_sprite("../example/art/font.bmp");
-    int grid_size = 30;
-    int characters_per_row = 19;
+/// @param font pointer to SDL_Surface with the font to use
+/// @param font_character_grid_size // width and height of a letter image in a font file, including spaces between characters
+/// @return pointer to SDL_Surface with character sprite; NULL if supplied a character that is not in the font file
+SDL_Surface* create_text_character_sprite(char c, SDL_Surface *font, int font_character_grid_size) {
+    int ascii_start = 32; // the first ASCII character included in the font file (32 for Space character), included
+    int ascii_end = 126; // the last ASCII character included in the font file (32 for Space character), included
 
-    int ascii_start = 32; // included
-    int ascii_end = 126; // included
     if (c > ascii_end) {
         return NULL;
     }
 
     int font_character_index = c - ascii_start;
 
-    SDL_Surface *character_sprite = SDL_CreateRGBSurfaceWithFormat(0, grid_size, grid_size, 
+    SDL_Surface *character_sprite = SDL_CreateRGBSurfaceWithFormat(0, font_character_grid_size, font_character_grid_size, 
                                                                  font->format->BitsPerPixel, font->format->format);
     
-    for (int y = 0; y < grid_size; ++y) {
-        for (int x = 0; x < grid_size; ++x) {
-            int font_row_index = font_character_index / characters_per_row;
-            int font_column_index = font_character_index % characters_per_row;
-
-            int font_index = (font_row_index * grid_size + y) * font->w + (font_column_index * grid_size + x);
-            ((int*)(character_sprite->pixels))[y * grid_size + x] = ((int*)(font->pixels))[font_index];
+    for (int y = 0; y < font_character_grid_size; ++y) {
+        for (int x = 0; x < font_character_grid_size; ++x) {
+            int font_index = y * font->w + (font_character_index * font_character_grid_size + x);
+            ((int*)(character_sprite->pixels))[y * font_character_grid_size + x] = ((int*)(font->pixels))[font_index];
         }
     }
 
     return character_sprite;
 }
 
+/// @brief Create a (!! one line) of text
+/// @param text text to create a sprite of
+/// @param text_length length of the provided text
+/// @return a pointer to SDL_Surface with text sprite
+SDL_Surface* create_text_sprite(char *text, int text_length, SDL_Surface *font, int font_character_grid_size) {
+    SDL_Surface *text_sprite = SDL_CreateRGBSurfaceWithFormat(0, font_character_grid_size * text_length, font_character_grid_size, 
+                                                                 font->format->BitsPerPixel, font->format->format);
+
+    for (int i = 0; i < text_length; ++i) {
+        char c = text[i];
+
+        SDL_Surface *character_sprite = create_text_character_sprite(c, font, font_character_grid_size);
+
+        for (int y = 0; y < font_character_grid_size; ++y) {
+            for (int x = 0; x < font_character_grid_size; ++x) {
+                int text_sprite_index = y * text_sprite->w + (i * font_character_grid_size + x);
+                ((int*)(text_sprite->pixels))[text_sprite_index] = 
+                    ((int*)(character_sprite->pixels))[y * font_character_grid_size + x];
+            }
+        }
+    }
+
+    return text_sprite;
+}
